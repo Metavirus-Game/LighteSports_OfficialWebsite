@@ -1,71 +1,20 @@
-import { LockOutlined, UserOutlined, HomeOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Card } from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Form, Input, message, Modal } from "antd";
 import axios from "axios";
 import "./sign.scss";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useContext } from "react";
 import { AuthContext } from "../../App";
-const Signin = () => {
+import { useState } from "react";
+import Signup from "./Signup";
+import UserInfo from "../UserInfo/UserInfo";
+const Signin = ({ isSigninOpen, setIsSigninOpen }) => {
   const navigate = useNavigate();
-  const { auth, setAuth } = useContext(AuthContext);
+  const { auth, setAuth, userInfo, setUserInfo } = useContext(AuthContext);
+  const [isUserInfoOpen, setIsUserInfoOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
   // const [userData, setUserData] = useState(null);
-  useEffect(() => {
-    if (localStorage.getItem("accountId") && localStorage.getItem("loginKey")) {
-      const accountId = localStorage.getItem("accountId");
-      const loginKey = localStorage.getItem("loginKey");
-      axios
-        .get("https://acc.metavirus.games/account/loginCheck", {
-          params: {
-            accountId: accountId,
-            loginKey: loginKey,
-            serviceId: "",
-          },
-        })
-        .then((response) => {
-          axios
-            .get("https://acc.metavirus.games/account/getProfile", {
-              params: {
-                id: accountId,
-                token: loginKey,
-                channel: "OFFICIAL-WEB",
-                serviceId: "",
-              },
-              headers: {
-                accountId: accountId,
-                loginKey: loginKey,
-                serviceId: "",
-              },
-            })
-            .then((response) => {
-              console.log(response);
-              const errorCode = response.data.code;
-              if (errorCode === 0) {
-                const userData = response.data.retObject;
-                setAuth(true);
-                navigate("/userInfo", {
-                  state: { userData: userData },
-                });
-                // setUserData(response.data.retObject);
-
-                // async function redirect() {
-                //   await setAuth(true);
-                //   navigate("/MetaVirusWeb_Formal/userInfo", {
-                //     state: { userData: userData },
-                //   });
-                // }
-                // console.log("ss: ", auth);
-                // redirect();
-              } else {
-                alert("Failed to retrieve user information");
-                throw Error("Failed to retrieve user information");
-              }
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-        });
-    }
-  }, []);
 
   // useEffect(() => {
   //   if (auth === true) {
@@ -76,7 +25,7 @@ const Signin = () => {
   // }, [auth, userData]);
 
   const onFinish = ({ username, password }) => {
-    console.log("Received values of form: ", username, password);
+    setLoading(true);
     axios
       .post("https://acc.metavirus.games/account/loginRequest", {
         username: username,
@@ -88,21 +37,18 @@ const Signin = () => {
         console.log("register response:", response);
         const errorCode = response.data.code;
         if (errorCode === 0) {
+          setLoading(false);
           console.log(response.data.retObject);
           const userData = response.data.retObject;
           localStorage.setItem("accountId", userData.accountId);
           localStorage.setItem("loginKey", userData.msg);
           return userData;
         } else {
-          alert(response.data.msg);
-          throw Error(response.data.msg);
-          // <Alert
-          //   message="Error"
-          //   description={response.data["msg"]}
-          //   type="warning"
-          //   showIcon
-          //   closable
-          // />;
+          setLoading(false);
+          messageApi.open({
+            type: "error",
+            content: response.data["msg"],
+          });
         }
       })
       .then((userData) => {
@@ -126,13 +72,22 @@ const Signin = () => {
             const errorCode = response.data.code;
             if (errorCode === 0) {
               const userData = response.data.retObject;
+              // setUserData(userData);
+              setIsSigninOpen(false);
               setAuth(true);
-              navigate("/userInfo", {
-                state: { userData: userData },
-              });
+              setUserInfo(userData);
+              // navigate("/userInfo", {
+              //   state: { userData: userData },
+              // });
+              localStorage.setItem("username", userData.username);
+              // sessionStorage.setItem("referralCode", userData.referralCode);
+              // navigate("/userInfo");
+              setIsUserInfoOpen(true);
             } else {
-              alert("Failed to retrieve user information");
-              throw Error("Failed to retrieve user information");
+              messageApi.open({
+                type: "error",
+                content: "Failed to retrieve user information",
+              });
             }
           })
           .catch((error) => {
@@ -144,12 +99,20 @@ const Signin = () => {
       });
   };
   return (
-    <div className="signForm">
-      <HomeOutlined className="homeIcon" onClick={() => navigate("/")} />
-      <Card title="Sign In" style={{ width: 400 }}>
+    <>
+      {contextHolder}
+      <Modal
+        open={isSigninOpen}
+        footer={null}
+        onCancel={() => setIsSigninOpen(false)}
+        title="Sign In"
+        centered
+        width={400}
+        // className="w-[1000rem]"
+      >
         <Form
+          className="mt-[2rem]"
           name="normal_login"
-          // className="login-form"
           initialValues={{
             remember: true,
           }}
@@ -193,21 +156,24 @@ const Signin = () => {
           Forgot password
         </a>
       </Form.Item> */}
-
-          <Form.Item>
+          <Form.Item className="mt-[2rem]">
             <Button
               type="primary"
               htmlType="submit"
-              // className="login-form-button"
-              style={{ width: "100%" }}
+              loading={loading}
+              className="w-[5rem] mx-auto block"
             >
               Log in
             </Button>
-            Or <a href={process.env.PUBLIC_URL + "/signup"}>register now!</a>
           </Form.Item>
         </Form>
-      </Card>
-    </div>
+      </Modal>
+      <UserInfo
+        userInfo={userInfo}
+        setIsUserInfoOpen={setIsUserInfoOpen}
+        isUserInfoOpen={isUserInfoOpen}
+      />
+    </>
   );
 };
 

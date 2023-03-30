@@ -1,10 +1,17 @@
-import { Button, Form, Input, Card } from "antd";
-import { HomeOutlined } from "@ant-design/icons";
-import { useState, useEffect } from "react";
+import { Button, Form, Input, message, Modal } from "antd";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import Signin from "./Signin";
 import "./sign.scss";
-function Signup() {
+function Signup({
+  isSignupOpen,
+  setIsSignupOpen,
+  referralCode,
+  fullpageApi,
+  isSigninOpen,
+  setIsSigninOpen,
+}) {
   const [resendState, setResendState] = useState(
     sessionStorage.getItem("resendState") === "true"
   );
@@ -13,9 +20,11 @@ function Signup() {
   );
 
   const [userEmail, setUserEmail] = useState(null);
-  // const [userPassword, setUserPassword] = useState(null);
   const [token, setToken] = useState(null);
-  // const [userCode, setUserCode] = useState(null);
+  // const [isSigninOpen, setisSigninOpen] = useState(false);
+  const [form] = Form.useForm();
+  const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
@@ -36,18 +45,20 @@ function Signup() {
     };
   }, [resendTime]);
 
-  const sendVeriCode = ({ email, password }) => {
+  const sendVeriCode = ({ email, password, referralCode }) => {
     setUserEmail(email);
     // setUserPassword(password);
     setResendState(true);
     sessionStorage.setItem("resendState", true);
     setResendTime(60);
+    setLoading(true);
     axios
       .post("https://acc.metavirus.games/account/registerRequest", {
         username: email,
         password: password,
         channel: "OFFICIAL-WEB",
         serviceId: "",
+        referralCode: referralCode,
       })
       .then(function (response) {
         console.log("register response:", response);
@@ -55,16 +66,14 @@ function Signup() {
         console.log(errorCode);
         if (errorCode === 0) {
           setToken(response.data["msg"]);
+          setLoading(false);
           // localStorage.setItem("token", response.data["msg"]);
         } else {
-          alert(response.data["msg"]);
-          // <Alert
-          //   message="Error"
-          //   description={response.data["msg"]}
-          //   type="warning"
-          //   showIcon
-          //   closable
-          // />;
+          setLoading(false);
+          messageApi.open({
+            type: "error",
+            content: response.data["msg"],
+          });
         }
       })
       .catch(function (error) {
@@ -86,6 +95,7 @@ function Signup() {
 
   const onSignup = ({ code }) => {
     // setUserCode(code);
+    setLoading(true);
     axios
       .post("https://acc.metavirus.games/account/verifyCode", {
         username: userEmail,
@@ -96,9 +106,20 @@ function Signup() {
         const errorCode = response.data["code"];
         if (errorCode === 0) {
           // redirect to login page?
-          alert("register successful");
+          messageApi.open({
+            type: "success",
+            content: "You have successfully registered!",
+          });
+          form.resetFields();
+          setIsSignupOpen(false);
+          setIsSigninOpen(true);
+          setLoading(false);
         } else {
-          alert(response.data["msg"]);
+          setLoading(false);
+          messageApi.open({
+            type: "error",
+            content: response.data["msg"],
+          });
         }
       })
       .catch(function (error) {
@@ -107,10 +128,21 @@ function Signup() {
   };
 
   const onSignupFailed = (values) => {};
+
   return (
-    <div className="signForm">
-      <HomeOutlined className="homeIcon" onClick={() => navigate("/")} />
-      <Card title="Sign Up" style={{ width: 700 }} className="signupCard">
+    <>
+      {contextHolder}
+      <Modal
+        open={isSignupOpen}
+        footer={null}
+        onCancel={() => {
+          setIsSignupOpen(false);
+          form.resetFields();
+        }}
+        title="Sign Up"
+        // className="max-w-[50vw] w-[50rem]"
+        centered
+      >
         <Form
           name="form1"
           // style={{
@@ -123,6 +155,7 @@ function Signup() {
           onFinish={sendVeriCode}
           onFinishFailed={sendVeriCodeFailed}
           autoComplete="off"
+          form={form}
         >
           <Form.Item
             {...formLayout}
@@ -169,9 +202,21 @@ function Signup() {
           >
             <Input.Password />
           </Form.Item>
+          <Form.Item label="Referral Code" name="referralCode" {...formLayout}>
+            <Input
+              placeholder="Please input your referral code"
+              defaultValue={referralCode}
+            />
+          </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" disabled={resendState}>
+            <Button
+              type="primary"
+              htmlType="submit"
+              disabled={resendState}
+              loading={loading}
+              className="w-[10rem] mx-auto block"
+            >
               Get Verification Code
             </Button>
             {resendState && <div>Retry after: {resendTime}</div>}
@@ -196,25 +241,41 @@ function Signup() {
                 message: "Please input your verification code",
               },
             ]}
+            labelCol={{
+              span: 8,
+            }}
+            wrapperCol={{
+              span: 10,
+            }}
           >
             <Input />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              className="w-[5rem] mx-auto block"
+            >
               Sign Up
             </Button>
           </Form.Item>
         </Form>
-        <div>
-          <div style={{ color: "black", marginBottom: "0.5rem" }}>
-            Already have an account?
-          </div>
-          <Button type="primary" onClick={() => navigate("/signin")}>
-            Sign in
-          </Button>
-        </div>
-      </Card>
-    </div>
+        <p className="mb-[.5rem] text-center">Already have an account?</p>
+        <Button
+          className="w-[5rem] mx-auto block"
+          type="primary"
+          // onClick={() => navigate("/signin")}
+          onClick={() => {
+            setIsSigninOpen(true);
+            setIsSignupOpen(false);
+          }}
+        >
+          Sign in
+        </Button>
+      </Modal>
+      <Signin isSigninOpen={isSigninOpen} setIsSigninOpen={setIsSigninOpen} />
+    </>
   );
 }
 export default Signup;

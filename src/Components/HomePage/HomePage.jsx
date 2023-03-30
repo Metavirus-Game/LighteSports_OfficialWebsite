@@ -3,79 +3,79 @@ import { useState, useEffect } from "react";
 import VideoPlayer from "./VideoPlayer";
 import { gsap } from "gsap";
 import MobileVideoPlayer from "./MobileVideoPlayer";
-export default function HomePage({ isLoaded }) {
+export default function HomePage({ isLoaded, fullpageApi }) {
   const [isPlayed, setIsPlayed] = useState(false);
   function playVideo() {
     setIsPlayed(true);
   }
 
-  useEffect(() => {
-    document.body.addEventListener("click", (event) => {
-      if (
-        event.target.id === "playButton" ||
-        event.target.className === "video"
-      ) {
-        return;
-      }
-      setIsPlayed(false);
-    });
-    // gsap.set("#bg_main", { y: "-50%" });
-    // if (isLoaded) {
-    gsap.fromTo(
-      "#bg_tl",
-      { y: "-100%", x: "-100%" },
-      {
-        duration: 2,
-        x: "0%",
-        y: "0%",
-        ease: "power2",
-      }
-    );
-    gsap.fromTo(
-      "#bg_tr",
-      { y: "-100%", x: "100%" },
-      {
-        duration: 2,
-        x: "0%",
-        y: "0%",
-        ease: "power2",
-      }
-    );
-    gsap.fromTo(
-      "#bg_bl",
-      { y: "100%", x: "-100%" },
-      {
-        duration: 2,
-        x: "0%",
-        y: "0%",
-        ease: "power2",
-      }
-    );
-    gsap.fromTo(
-      "#bg_br",
-      { y: "100%", x: "100%" },
-      {
-        duration: 2,
-        x: "0%",
-        y: "0%",
-        ease: "power2",
-      }
-    );
-    gsap.fromTo(
-      "#bg_main",
-      { opacity: 0 },
-      {
-        duration: 2,
-        opacity: 1,
-        ease: "power2.out",
-      }
-    );
-  }, []);
+  // useEffect(() => {
+  //   document.body.addEventListener("click", (event) => {
+  //     if (
+  //       event.target.id === "playButton" ||
+  //       event.target.className === "video"
+  //     ) {
+  //       return;
+  //     }
+  //     setIsPlayed(false);
+  //   });
+  //   // gsap.set("#bg_main", { y: "-50%" });
+  //   // if (isLoaded) {
+  //   gsap.fromTo(
+  //     "#bg_tl",
+  //     { y: "-100%", x: "-100%" },
+  //     {
+  //       duration: 2,
+  //       x: "0%",
+  //       y: "0%",
+  //       ease: "power2",
+  //     }
+  //   );
+  //   gsap.fromTo(
+  //     "#bg_tr",
+  //     { y: "-100%", x: "100%" },
+  //     {
+  //       duration: 2,
+  //       x: "0%",
+  //       y: "0%",
+  //       ease: "power2",
+  //     }
+  //   );
+  //   gsap.fromTo(
+  //     "#bg_bl",
+  //     { y: "100%", x: "-100%" },
+  //     {
+  //       duration: 2,
+  //       x: "0%",
+  //       y: "0%",
+  //       ease: "power2",
+  //     }
+  //   );
+  //   gsap.fromTo(
+  //     "#bg_br",
+  //     { y: "100%", x: "100%" },
+  //     {
+  //       duration: 2,
+  //       x: "0%",
+  //       y: "0%",
+  //       ease: "power2",
+  //     }
+  //   );
+  //   gsap.fromTo(
+  //     "#bg_main",
+  //     { opacity: 0 },
+  //     {
+  //       duration: 2,
+  //       opacity: 1,
+  //       ease: "power2.out",
+  //     }
+  //   );
+  // }, []);
 
   return (
     <>
       <div className="homeContainer">
-        <img
+        {/* <img
           id="bg_tl"
           src={process.env.PUBLIC_URL + "/img/bg_tl.png"}
           alt="tl"
@@ -100,21 +100,31 @@ export default function HomePage({ isLoaded }) {
           id="bg_main"
           src={process.env.PUBLIC_URL + "/img/bg_main.png"}
           alt="main"
+        /> */}
+        <img
+          id="logo"
+          src={process.env.PUBLIC_URL + "/img/logo_les.png"}
+          alt="main"
         />
         <div style={{ zIndex: "2" }}>
-          <h1>Light eSports</h1>
-          <button style={{ marginRight: "1rem" }}>Try It</button>
-          {window.innerWidth > 500 && (
+          <h3>The word's first truly web3 ESports platform</h3>
+          <button
+            style={{ marginRight: "1rem" }}
+            onClick={() => fullpageApi.silentMoveTo(6)}
+          >
+            Try It
+          </button>
+          {/* {window.innerWidth > 500 && (
             <>
               <button id="playButton" onClick={playVideo}>
                 Watch Video
               </button>
               {isPlayed && <VideoPlayer />}
             </>
-          )}
+          )} */}
         </div>
       </div>
-      {window.innerWidth < 500 && <MobileVideoPlayer />}
+      {/* {window.innerWidth < 500 && <MobileVideoPlayer />} */}
     </>
   );
 }
