@@ -411,10 +411,10 @@ export default function UserInfo({
               <Form.Item
                 name="agreement1"
                 valuePropName="checked"
-                wrapperCol={{
-                  span: 16,
-                  offset: 4,
-                }}
+                // wrapperCol={{
+                //   span: 16,
+                //   offset: 4,
+                // }}
                 rules={[
                   {
                     validator: (_, value) =>
@@ -453,10 +453,10 @@ export default function UserInfo({
           )}
 
           <Form.Item
-            wrapperCol={{
-              offset: 10,
-              span: 14,
-            }}
+          // wrapperCol={{
+          //   offset: 10,
+          //   span: 14,
+          // }}
           >
             <Button type="primary" htmlType="submit">
               Submit
