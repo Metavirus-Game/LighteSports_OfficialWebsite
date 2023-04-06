@@ -107,7 +107,7 @@ export default function HomePage({ isLoaded, fullpageApi }) {
           alt="main"
         />
         <div style={{ zIndex: "2" }}>
-          <h3>The world's first truly web3 ESports platform</h3>
+          <h3>The world's first truly web3 eSports platform</h3>
           <button
             style={{ marginRight: "1rem" }}
             onClick={() => fullpageApi.silentMoveTo(6)}
