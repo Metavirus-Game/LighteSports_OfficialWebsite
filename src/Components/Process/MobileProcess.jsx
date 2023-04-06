@@ -191,7 +191,7 @@ export default function MobileProcess({ isLoaded }) {
                 textAlign: "left",
               }}
             >
-              <li>
+              {/* <li>
                 Successive launch of game clusters and diversification of light
                 e-sports platform events.
               </li>
@@ -211,7 +211,13 @@ export default function MobileProcess({ isLoaded }) {
               <li>
                 Enhancement of AR technology display, collaboration with device
                 manufacturers or independent launch of AR glasses.
+              </li> */}
+              <li>Launch of game clusters and light e-sports events.</li>
+              <li>
+                Encourage games to integrate into light e-sports ecosystem.
               </li>
+              <li>VR, AR and real-life interactions.</li>
+              <li>Introduction of brands, game and advertising integration.</li>
             </ul>
           </div>
         </div>

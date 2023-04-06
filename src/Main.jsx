@@ -24,9 +24,9 @@ const anchors = [
   "SolidBarrier",
   "MetaVirus",
   "Gallery",
-  "FinanceTarget",
+  // "FinanceTarget",
   "Token&Liquidity",
-  "Core",
+  // "Core",
   "Process",
   "Team",
   "Partner",
@@ -109,27 +109,27 @@ const Main = () => {
               <div className="section">
                 <VirusGallery isLoaded={sectionLoaded[6]} />
               </div>
-              <div className="section">
+              {/* <div className="section">
                 <FinTarget isLoaded={sectionLoaded[7]} />
-              </div>
+              </div> */}
               <div className="section">
-                <Chart isLoaded={sectionLoaded[8]} />
+                <Chart isLoaded={sectionLoaded[7]} />
               </div>
-              <div className="section">
+              {/* <div className="section">
                 <GameCore isLoaded={sectionLoaded[9]} />
-              </div>
+              </div> */}
               <div className="section">
                 {window.innerWidth < 500 ? (
-                  <MobileProcess isLoaded={sectionLoaded[10]} />
+                  <MobileProcess isLoaded={sectionLoaded[8]} />
                 ) : (
-                  <Process isLoaded={sectionLoaded[10]} />
+                  <Process isLoaded={sectionLoaded[8]} />
                 )}
               </div>
               <div className="section">
-                <Team isLoaded={sectionLoaded[11]} />
+                <Team isLoaded={sectionLoaded[9]} />
               </div>
               <div className="section">
-                <Partner isLoaded={sectionLoaded[12]} />
+                <Partner isLoaded={sectionLoaded[9]} />
               </div>
             </div>
           );
