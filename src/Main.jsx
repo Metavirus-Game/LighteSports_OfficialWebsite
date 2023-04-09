@@ -53,7 +53,7 @@ const Main = () => {
 
   return (
     <>
-      <Navigation />
+      {/* <Navigation /> */}
       <ReactFullpage
         anchors={anchors}
         navigation
@@ -86,7 +86,7 @@ const Main = () => {
           // console.log("render prop change", fullpageApi);
           return (
             <>
-              {/* <Navigation fullpageApi={fullpageApi} /> */}
+              <Navigation fullpageApi={fullpageApi} />
               <div className="section">
                 <HomePage
                   isLoaded={sectionLoaded[0]}
