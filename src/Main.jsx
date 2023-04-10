@@ -15,6 +15,7 @@ import Partner from "./Components/Partner/Partner";
 import UFDPlatform from "./Components/UFDPlatform/UFDPlatform";
 import GameFiSup from "./Components/GameFiSup/GameFiSup";
 import MetavirusPage from "./Components/MetavirusPage/MetavirusPage";
+import SocialMedia from "./Components/SocialMedia/SocialMedia";
 import "animate.css";
 const anchors = [
   "Home",
@@ -30,6 +31,7 @@ const anchors = [
   "Process",
   "Team",
   "Partner",
+  "FollowUs",
 ];
 
 const Main = () => {
@@ -56,7 +58,7 @@ const Main = () => {
         anchors={anchors}
         navigation
         navigationTooltips={anchors}
-        navigat
+        // fixedElements="#test"
         scrollingSpeed="1200"
         responsiveWidth={450}
         easing="easeInOutCubic"
@@ -83,7 +85,7 @@ const Main = () => {
         render={({ state, fullpageApi }) => {
           // console.log("render prop change", fullpageApi);
           return (
-            <div>
+            <>
               <Navigation fullpageApi={fullpageApi} />
               <div className="section">
                 <HomePage
@@ -131,7 +133,10 @@ const Main = () => {
               <div className="section">
                 <Partner isLoaded={sectionLoaded[9]} />
               </div>
-            </div>
+              <div className="section fp-auto-height">
+                <SocialMedia />
+              </div>
+            </>
           );
         }}
       />
