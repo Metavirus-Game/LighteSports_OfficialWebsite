@@ -48,10 +48,8 @@ function Signup({
   const sendVeriCode = ({ email, password, referralCode }) => {
     setUserEmail(email);
     // setUserPassword(password);
-    setResendState(true);
     sessionStorage.setItem("resendState", true);
-    setResendTime(60);
-    // setLoading(true);
+    setLoading(true);
     axios
       .post("https://acc.metavirus.games/account/registerRequest", {
         username: email,
@@ -68,10 +66,12 @@ function Signup({
           setToken(response.data["msg"]);
           setIsVerifiOpen(true);
           setIsSignupOpen(false);
-          // setLoading(false);
+          setLoading(false);
+          setResendState(true);
+          setResendTime(60);
           // localStorage.setItem("token", response.data["msg"]);
         } else {
-          // setLoading(false);
+          setLoading(false);
           messageApi.open({
             type: "error",
             content: response.data["msg"],
@@ -82,6 +82,33 @@ function Signup({
         console.log(error);
       });
   };
+
+  const resendVerifiCode = () => {
+    setLoading(true);
+    axios
+      .post("https://acc.metavirus.games/account/registerRequest", {
+        username: userEmail,
+        token: token,
+      })
+      .then(function (response) {
+        const errorCode = response.data["code"];
+        if (errorCode === 0) {
+          setLoading(false);
+          setResendTime(60);
+          setResendState(true);
+        } else {
+          setLoading(false);
+          messageApi.open({
+            type: "error",
+            content: response.data["msg"],
+          });
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   const sendVeriCodeFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
@@ -154,21 +181,6 @@ function Signup({
         onFinishFailed={onSignupFailed}
         autoComplete="off"
       >
-        <Form.Item>
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={resendState}
-            loading={loading}
-            className="w-[10rem] mx-auto block"
-          >
-            Resend verification code
-          </Button>
-          {resendState && (
-            <p className="text-center">Retry after: {resendTime}</p>
-          )}
-        </Form.Item>
-
         <Form.Item
           label="Verification Code"
           name="code"
@@ -183,10 +195,23 @@ function Signup({
             span: 8,
           }}
           wrapperCol={{
-            span: 10,
+            span: 16,
           }}
         >
-          <Input />
+          <div className="flex">
+            {/* <div className="w-[10rem] mr-[1rem]"> */}
+            <Input className="w-[8rem] mr-[1rem]" />
+            {/* </div> */}
+
+            <Button
+              type="primary"
+              onClick={resendVerifiCode}
+              disabled={resendState}
+              // loading={loading}
+            >
+              {resendState ? `Retry after: ${resendTime}` : `Resend code`}
+            </Button>
+          </div>
         </Form.Item>
         <Form.Item>
           <Button
@@ -283,11 +308,15 @@ function Signup({
             />
           </Form.Item>
           <Form.Item>
+            {resendState && (
+              <p className="text-center">Retry after: {resendTime}</p>
+            )}
             <Button
               type="primary"
               htmlType="submit"
+              disabled={resendState}
               loading={loading}
-              className="w-[10rem] mx-auto block"
+              className="mx-auto block"
             >
               Get verification code
             </Button>
