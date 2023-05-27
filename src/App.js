@@ -24,16 +24,17 @@ export default function App() {
           },
         })
         .then((response) => {
-          console.log(response);
+          // console.log(response);
           const errorCode = response.data.code;
           if (errorCode === 0) {
             setAuth(true);
+          } else {
+            setAuth(false);
           }
-        })
-        .catch((error) => {
-          console.log(error);
-          setAuth(false);
         });
+      // .catch((error) => {
+      //   console.log(error);
+      // });
     } else {
       setAuth(false);
     }
