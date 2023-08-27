@@ -60,7 +60,7 @@ export default function Navigation({ fullpageApi }) {
               },
             })
             .then((response) => {
-              console.log(response);
+              // console.log(response);
               const errorCode = response.data.code;
               if (errorCode === 0) {
                 const userData = response.data.retObject;
@@ -68,8 +68,9 @@ export default function Navigation({ fullpageApi }) {
                 setUserInfo(userData);
                 setAuth(true);
               } else {
-                alert("Failed to retrieve user information");
-                throw Error("Failed to retrieve user information");
+                // alert("Failed to retrieve user information");
+                // throw Error("Failed to retrieve user information");
+                setAuth(false);
               }
             })
             .catch((error) => {

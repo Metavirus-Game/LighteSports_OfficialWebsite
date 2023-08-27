@@ -1,7 +1,6 @@
 import { Button, Form, Input, message, Modal } from "antd";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 import Signin from "./Signin";
 import "./sign.scss";
 function Signup({
@@ -26,23 +25,19 @@ function Signup({
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
 
-  const navigate = useNavigate();
-
   useEffect(() => {
-    const interval = setInterval(() => {
-      if (resendTime > 0) {
+    if (resendTime > 0) {
+      const interval = setInterval(() => {
         setResendTime((pre) => pre - 1);
         sessionStorage.setItem("resendTime", resendTime);
-      }
-      if (resendTime === 0) {
-        sessionStorage.setItem("resendState", false);
-        setResendState(false);
+      }, 1000);
+      return () => {
         clearInterval(interval);
-      }
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
+      };
+    } else {
+      sessionStorage.setItem("resendState", false);
+      setResendState(false);
+    }
   }, [resendTime]);
 
   const sendVeriCode = ({ email, password, referralCode }) => {
@@ -93,7 +88,7 @@ function Signup({
         },
       })
       .then(function (response) {
-        console.log(response);
+        // console.log(response);
         const errorCode = response.data["code"];
         if (errorCode === 0) {
           setLoading(false);
